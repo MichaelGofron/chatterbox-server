@@ -47,11 +47,13 @@ exports.requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
+  var roomPath = '/classes/room';
 
-  if (request.url === '/classes/messages' && request.method === 'GET'){
+  if (request.url === '/classes/messages' && request.method === 'GET' || request.url.substr(0, roomPath.length) === roomPath && request.method === 'GET'){
     response.writeHead(statusCode,headers);
+    console.log("classes/messages && GET");
     response.end(JSON.stringify(data));
-  } else if (request.url === '/classes/messages' && request.method === 'POST'){
+  } else if ((request.url === '/classes/messages' && request.method === 'POST') || (request.url.substr(0, roomPath.length) === roomPath && request.method === 'POST' )){
     response.writeHead(201, headers);
     var tempData = '';
     request.on('data', function(data) {
@@ -60,27 +62,17 @@ exports.requestHandler = function(request, response) {
     request.on('end', function() {
       data.results.push(JSON.parse(tempData));
     });
-  } else if (request.url === '/classes/room' && request.method === 'GET'){
-    response.writeHead(statusCode,headers);
-    response.end(JSON.stringify(data));
+    response.end("Hello World");
+    console.log("classes/messages && POST");
   } else if (request.method === 'OPTIONS'){
     response.writeHead(200, headers);
+    console.log("in options");
+    response.end();
   } else {
     response.writeHead(404, headers);
+    response.end("404");
+    console.log("in else");
   }
-
-
-  // dispatcher.dispatch(request, response);
-
-  // dispatcher.onGet('/classes/messages', function(req, res) {
-  //   res.writeHead(200, headers);
-  //   res.end('get data');
-  // });
-
-  // dispatcher.onPost('/classes/messages', function(req, res) {
-  //   res.writeHead(200, headers);
-  //   res.end('got post data');
-  // });
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -89,7 +81,6 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello world');
 };
 
 

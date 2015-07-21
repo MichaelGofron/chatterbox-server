@@ -30,7 +30,11 @@ describe('Node Server Request Listener Function', function() {
 
     handler.requestHandler(req, res);
 
+    console.log(req);
+    console.log(res);
+
     expect(JSON.parse.bind(this, res._data)).to.not.throw();
+    // expect(JSON.parse(res._data)).to.not.throw();
     expect(res._ended).to.equal(true);
   });
 
